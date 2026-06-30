@@ -1,6 +1,6 @@
-# Pi Skills
+# Agent Skills
 
-Custom skills for [Pi](https://github.com/earendil-works/pi-coding-agent), a coding agent harness.
+A collection of skills for coding agents — works with Pi, Codex, Claude Code, and others.
 
 ## Skills
 
