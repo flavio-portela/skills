@@ -1,0 +1,97 @@
+{
+  "skill_name": "draft-pr",
+  "should_trigger": [
+    {
+      "id": 1,
+      "prompt": "draft a PR description for this branch",
+      "reason": "Direct request — canonical trigger phrase"
+    },
+    {
+      "id": 2,
+      "prompt": "I need to write up what this PR does before I send it for review. Can you help?",
+      "reason": "Indirect phrasing — doesn't say 'PR description' but intent is clear"
+    },
+    {
+      "id": 3,
+      "prompt": "write a pr description, keep it short",
+      "reason": "Direct with a style constraint — should still trigger and respect brevity"
+    },
+    {
+      "id": 4,
+      "prompt": "what should I put in this PR?",
+      "reason": "Matches the explicit trigger phrase from the skill description"
+    },
+    {
+      "id": 5,
+      "prompt": "can you generate a description for my pull request?",
+      "reason": "Uses 'pull request' instead of 'PR' — common variation"
+    },
+    {
+      "id": 6,
+      "prompt": "I'm ready to open the PR, help me write the body",
+      "reason": "Asks for PR body specifically — same intent as description"
+    },
+    {
+      "id": 7,
+      "prompt": "prepare a PR for this branch",
+      "reason": "Slightly ambiguous but 'prepare a PR' implies writing the description"
+    },
+    {
+      "id": 8,
+      "prompt": "summarize my changes so I can put them in a PR",
+      "reason": "Indirect — wants a summary for PR purposes, skill should handle this"
+    },
+    {
+      "id": 9,
+      "prompt": "/draft-pr",
+      "reason": "Explicit slash command from the skill description"
+    }
+  ],
+  "should_not_trigger": [
+    {
+      "id": 10,
+      "prompt": "review the PR",
+      "reason": "This is a code review request — should trigger code-review skill instead"
+    },
+    {
+      "id": 11,
+      "prompt": "create a PR for this branch",
+      "reason": "Asks to create/open the PR (gh pr create), not write its description. Skill only drafts — creation is a separate step."
+    },
+    {
+      "id": 12,
+      "prompt": "what PRs do I have open?",
+      "reason": "Asking to list PRs, not write a description"
+    },
+    {
+      "id": 13,
+      "prompt": "merge the PR",
+      "reason": "Action on an existing PR, not drafting a description"
+    },
+    {
+      "id": 14,
+      "prompt": "write a commit message for my changes",
+      "reason": "Adjacent task — commit messages are different from PR descriptions"
+    },
+    {
+      "id": 15,
+      "prompt": "pull the comments from PR #42",
+      "reason": "Should trigger pr-comments skill instead"
+    },
+    {
+      "id": 16,
+      "prompt": "can you explain what this PR does?",
+      "reason": "Asking to read/understand an existing PR, not draft a new description"
+    },
+    {
+      "id": 17,
+      "prompt": "post my review comments to the PR",
+      "reason": "Should trigger pr-inline-comments skill instead"
+    },
+    {
+      "id": 18,
+      "prompt": "write documentation for this function",
+      "reason": "General documentation request — nothing to do with PRs"
+    }
+  ]
+}
