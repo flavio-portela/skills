@@ -1,3 +1,9 @@
+---
+name: skills-readme
+description: Index of available skills. Not a skill itself.
+disable-model-invocation: true
+---
+
 # Agent Skills
 
 A collection of skills for coding agents — works with Pi, Codex, Claude Code, and others.
