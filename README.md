@@ -22,5 +22,6 @@ A collection of skills for coding agents — works with Pi, Codex, Claude Code, 
 ## Workflow Examples
 
 - **Before merging**: `pr-comments` → `code-review` → address findings with `code-simplify`
+- **Large PR**: `task-planner` → implement phases → `code-review` per phase → `draft-pr`
 - **New feature**: `task-planner` → implement → `code-review` → `draft-pr`
 - **UI work**: `frontend-design` → `code-review` → `draft-pr`

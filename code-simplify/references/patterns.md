@@ -1,5 +1,7 @@
 # Common Simplification Patterns
 
+> These patterns are language-agnostic. Examples below use JavaScript/TypeScript, Python, and React, but apply to any language or framework.
+
 ## Redundant Conditional
 
 ```javascript

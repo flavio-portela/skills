@@ -91,6 +91,8 @@ Group related changes together. For each change:
 
 ## Reference Materials
 
+> Paths below are relative to this skill's directory.
+
 - **Common patterns**: See `references/patterns.md` for before/after examples
 - **Anti-patterns**: See `references/anti-patterns.md` for what to avoid
 

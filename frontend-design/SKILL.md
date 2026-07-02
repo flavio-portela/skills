@@ -7,7 +7,7 @@ compatibility: "Works with any frontend stack (HTML/CSS/JS, React, Vue, Svelte, 
 
 # Frontend Design
 
-Create distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
+Create distinctive, production-grade frontend interfaces that avoid generic AI-generated aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
 
 ## Workflow
 
@@ -63,39 +63,6 @@ Write production-grade, functional code (HTML/CSS/JS, React, Vue, Svelte, Flutte
 | Generic shadows and borders | Decorative details that serve the concept |
 | Same safe aesthetic every time | Vary between light/dark, different visual languages |
 | Over-animated everything | One or two high-impact moments > scattered micro-interactions |
-
-## Design Quick Reference
-
-### Typography Pairings (non-generic)
-
-| Display | Body | Vibe |
-|---------|------|------|
-| Playfair Display | Source Sans 3 | Editorial, refined |
-| Space Mono | IBM Plex Sans | Technical, precise |
-| DM Serif Display | DM Sans | Warm, editorial |
-| Syne | Plus Jakarta Sans | Bold, contemporary |
-| Fraunces | Sora | Soft, expressive |
-| Clash Display | Geist | Modern, clean |
-| Alegreya | Lato | Literary, classic |
-| Outfit | Work Sans | Geometric, friendly |
-
-### Animation Timing Tokens
-
-```css
---instant: 0ms;
---fast: 150ms;
---normal: 300ms;
---slow: 500ms;
---stagger: 50ms; /* per-item delay for lists */
-```
-
-### Background Atmosphere Techniques
-
-- **Gradient mesh**: Multiple overlapping radial gradients with low opacity
-- **Noise texture**: SVG filter with `feTurbulence` for grain
-- **Dot grid**: CSS `radial-gradient` as repeating background
-- **Geometric shapes**: Large blurred circles/squares for depth
-- **Line patterns**: Subtle CSS repeating gradients for texture
 
 ## Output Format
 

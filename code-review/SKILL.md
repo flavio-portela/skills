@@ -29,20 +29,21 @@ When the user mentions a PR number or asks to "review the PR":
      gh pr view --json number --jq '.number'
      ```
      If this returns `null` or fails, the branch has no open PR. Fall back to Branch Mode or ask the user.
+     Note: `gh pr view` works for PRs in the same repo. For fork-based PRs, it may require `--repo <owner/repo>`.
 
-2. **Fetch PR context**:
+3. **Fetch PR context**:
    ```bash
    gh pr view <NUMBER> --json title,body,labels,baseRefName,headRefName
    ```
 
-3. **Fetch the diff**:
+4. **Fetch the diff**:
    ```bash
    gh pr diff <NUMBER>
    ```
 
-4. **Use PR title and description** to understand the author's intent — this frames what the review should focus on.
+5. **Use PR title and description** to understand the author's intent — this frames what the review should focus on.
 
-5. **Check labels** — labels like `security`, `breaking-change`, or `performance` should tune the review focus accordingly.
+6. **Check labels** — labels like `security`, `breaking-change`, or `performance` should tune the review focus accordingly.
 
 ### Branch Mode
 

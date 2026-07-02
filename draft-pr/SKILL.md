@@ -20,13 +20,13 @@ quickly understand *what changed* and *why*, without needing to read the code.
 Run these git commands to understand the branch:
 
 ```bash
-# Detect the base branch (upstream target)
-BASE=$(git merge-base --fork-point HEAD 2>/dev/null || git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo 'main')
+# Detect the fork point commit (divergence from upstream branch)
+BASE_COMMIT=$(git merge-base --fork-point HEAD 2>/dev/null || git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || git remote show origin 2>/dev/null | grep 'HEAD branch' | awk '{print $NF}' || echo 'main')
 # What branch are we on?
 git branch --show-current
-git log --oneline "$BASE"..HEAD
-git diff "$BASE"..HEAD --stat
-git diff "$BASE"..HEAD
+git log --oneline "$BASE_COMMIT"..HEAD
+git diff "$BASE_COMMIT"..HEAD --stat
+git diff "$BASE_COMMIT"..HEAD
 ```
 
 If there are very many changed files (more than ~15), focus on the `--stat` summary and the

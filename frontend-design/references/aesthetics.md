@@ -2,7 +2,7 @@
 
 ## Generic AI Design Patterns to Avoid
 
-These are the most common "AI slop" aesthetics. If your design looks like any of these, pivot:
+These are the most common generic AI-generated aesthetics. If your design looks like any of these, pivot:
 
 ### The "Purple Gradient on White" Pattern
 - Linear gradient from `#7c3aed` to `#a855f7` on hero sections
@@ -91,3 +91,36 @@ These are the most common "AI slop" aesthetics. If your design looks like any of
 - [ ] `prefers-reduced-motion` is respected
 - [ ] Semantic HTML structure (headings in order, landmarks)
 - [ ] Touch targets are at least 44x44px
+
+## Design Quick Reference
+
+### Typography Pairings (non-generic)
+
+| Display | Body | Vibe |
+|---------|------|------|
+| Playfair Display | Source Sans 3 | Editorial, refined |
+| Space Mono | IBM Plex Sans | Technical, precise |
+| DM Serif Display | DM Sans | Warm, editorial |
+| Syne | Plus Jakarta Sans | Bold, contemporary |
+| Fraunces | Sora | Soft, expressive |
+| Clash Display | Geist | Modern, clean |
+| Alegreya | Lato | Literary, classic |
+| Outfit | Work Sans | Geometric, friendly |
+
+### Animation Timing Tokens
+
+```css
+--instant: 0ms;
+--fast: 150ms;
+--normal: 300ms;
+--slow: 500ms;
+--stagger: 50ms; /* per-item delay for lists */
+```
+
+### Background Atmosphere Techniques
+
+- **Gradient mesh**: Multiple overlapping radial gradients with low opacity
+- **Noise texture**: SVG filter with `feTurbulence` for grain
+- **Dot grid**: CSS `radial-gradient` as repeating background
+- **Geometric shapes**: Large blurred circles/squares for depth
+- **Line patterns**: Subtle CSS repeating gradients for texture
