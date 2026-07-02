@@ -1,6 +1,7 @@
 ---
 name: pr-comments
 description: Fetches and presents comments from a GitHub pull request. Use when asked to pull, get, or review PR comments. Organizes review comments by file for easy analysis and action planning.
+compatibility: "Requires GitHub CLI (gh) installed and authenticated. Repository must be on GitHub."
 ---
 
 # PR Comments
@@ -9,8 +10,11 @@ Fetches all comments from a GitHub pull request and presents them in a structure
 
 ## Prerequisites
 
-- `gh` CLI installed and authenticated (`gh auth status`)
-- Repository must be a GitHub repo
+Verify before proceeding:
+```bash
+gh auth status
+```
+If authentication fails, ask the user to log in with `gh auth login`.
 
 ## Identifying the PR
 
@@ -126,3 +130,15 @@ If the user asks for analysis, identify:
 - Unresolved threads or open questions
 - Actionable items that need code changes
 - Priority ordering (blockers first, then suggestions)
+
+## Usage
+
+- **"Pull PR comments"** — auto-detect PR from current branch
+- **"Pull comments for #42"** — specific PR number
+- **"Analyze the PR feedback"** — fetch + analyze
+- **"What did reviewers say?"** — fetch + summarize
+
+## Notes
+
+- **Related:** Use `code-review` to independently review the same PR
+- **Related:** Use `draft-pr` to update the PR description based on feedback
