@@ -1,6 +1,7 @@
 ---
 name: task-planner
 description: Creates and manages structured plan.md files for complex multi-session coding tasks. Investigates the codebase first, resolves ambiguities with the user, then produces a detailed plan where each phase is a self-contained brief for a separate agent session.
+compatibility: "Requires git for codebase investigation. Plans stored in project's plans/ directory."
 ---
 
 # Task Planner
@@ -99,6 +100,19 @@ Break the work into sequential phases. For each phase:
 ### Step 4.5: Review with the User
 
 Before writing the final plan file, present the phase outline to the user:
+
+```markdown
+Here's the proposed plan:
+
+1. **Phase 1: <title>** — <one-line goal> (small/medium/large)
+2. **Phase 2: <title>** — <one-line goal> (small/medium/large)
+3. **Phase 3: <title>** — <one-line goal> (small/medium/large)
+
+Dependencies: Phase 2 → Phase 1, Phase 3 → Phase 2
+
+Does this scope and ordering look right? Anything to adjust?
+```
+
 - List each phase title and goal
 - Confirm the scope, ordering, and approach
 - Ask if anything needs adjustment
@@ -218,3 +232,5 @@ If called without subcommand, defaults to `create`.
 - The **Design Decisions** section in the plan captures *why* choices were made, so a fresh agent executing phases later understands the rationale
 - **Mid-plan updates:** If phases have already been executed, an update should preserve completed phases and only re-plan the remaining work. Re-investigate to account for any new context from completed phases.
 - **Plan splitting:** If a plan exceeds ~8 phases, split it into multiple plans (e.g., `plan-backend.md` and `plan-frontend.md`) to keep each one digestible.
+- **Related:** Use `code-review` to validate completed phases before moving to the next
+- **Related:** Use `code-simplify` within phases that involve refactoring existing code

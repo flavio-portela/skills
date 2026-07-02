@@ -1,6 +1,7 @@
 ---
 name: code-review
 description: Reviews code changes from a GitHub PR or current git branch. Reports findings ranked by severity with an overall verdict. Use when asked to review a PR, review code, or review branch changes.
+compatibility: "Requires git. PR mode requires GitHub CLI (gh) installed and authenticated."
 ---
 
 # Code Review
@@ -15,12 +16,19 @@ Detect which mode to use based on the user's request:
 
 When the user mentions a PR number or asks to "review the PR":
 
-1. **Get the PR number**:
+1. **Verify prerequisites**:
+   ```bash
+   gh auth status
+   ```
+   If authentication fails, ask the user to log in with `gh auth login`.
+
+2. **Get the PR number**:
    - Explicit number (e.g., "review PR #42") → use that number
    - No number given (e.g., "review the PR") → auto-detect from current branch:
      ```bash
-     gh pr status --json currentBranch --jq '.currentBranch.number'
+     gh pr view --json number --jq '.number'
      ```
+     If this returns `null` or fails, the branch has no open PR. Fall back to Branch Mode or ask the user.
 
 2. **Fetch PR context**:
    ```bash
@@ -38,7 +46,7 @@ When the user mentions a PR number or asks to "review the PR":
 
 ### Branch Mode
 
-When the user asks to review their branch, current changes, or doesn't mention a PR:
+When the user asks to review their branch, current changes, or when PR Mode auto-detection fails:
 
 1. **Determine the base branch** — default is `main`. User can specify a different base (e.g., "review against develop").
 
@@ -97,6 +105,19 @@ Verdict: Request Changes — 1 must-fix, 2 should-fix
 - **Comment** — only suggestions and/or nits (no must-fix or should-fix).
 
 If all findings are 🔵 or 💡, the verdict is **Comment** with the count. If there are 🟡 or 🔴 findings, the verdict is **Request Changes** — never Approve while problems remain.
+
+## Usage
+
+- **"Review PR #42"** — PR Mode, specific number
+- **"Review the PR"** — PR Mode, auto-detect from current branch
+- **"Review my branch"** — Branch Mode against `main`
+- **"Review against develop"** — Branch Mode against specified base
+- **"Thorough review"** / **"Include nits"** — enables `--thorough` mode
+
+## Notes
+
+- **Related:** Use `pr-comments` to fetch existing review feedback before starting your review
+- **Related:** Use `code-simplify` to fix findings after the review is complete
 
 ### If No Findings
 

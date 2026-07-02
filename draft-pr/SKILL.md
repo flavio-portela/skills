@@ -6,6 +6,7 @@ description: >
   the matching template. Use this skill whenever the user wants to write, draft, or generate a
   PR description, prepare a pull request, or asks "what should I put in this PR?" — even if they
   don't say "description" explicitly. Also use it when the user says /draft-pr.
+compatibility: "Requires git. Creating PRs requires GitHub CLI (gh) installed and authenticated."
 ---
 
 # Draft PR Description
@@ -20,7 +21,7 @@ Run these git commands to understand the branch:
 
 ```bash
 # Detect the base branch (upstream target)
-BASE=$(git merge-base --fork-point HEAD 2>/dev/null || git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|origin/||')
+BASE=$(git merge-base --fork-point HEAD 2>/dev/null || git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo 'main')
 # What branch are we on?
 git branch --show-current
 git log --oneline "$BASE"..HEAD
@@ -127,8 +128,33 @@ Show the drafted description to the user. Then ask:
 
 > "Here's the draft. Want me to adjust anything, or should I go ahead and create the PR with this?"
 
-If the user says to go ahead, create the PR using `gh pr create` with the title and body.
-Pick a short, clear PR title (under 70 characters) in **conventional-commit format**: `type(scope): description` (e.g. `feat(chat): add message prefill support`, `fix(frontend): prevent crash on empty form`). Derive the type from the PR classification (feat, fix, docs, refactor, etc.) and scope from the primary area of change.
+If the user says to go ahead:
+
+1. **Verify `gh` is authenticated**:
+   ```bash
+   gh auth status
+   ```
+   If authentication fails, ask the user to log in with `gh auth login`.
+
+2. Create the PR using `gh pr create` with the title and body.
+   Pick a short, clear PR title (under 70 characters) in **conventional-commit format**: `type(scope): description` (e.g. `feat(chat): add message prefill support`, `fix(frontend): prevent crash on empty form`). Derive the type from the PR classification (feat, fix, docs, refactor, etc.) and scope from the primary area of change.
+
+## Usage
+
+- **"Draft a PR"** / **"Write a PR description"** — auto-detect branch and draft
+- **"Create the PR"** — draft and immediately create via `gh pr create`
+- **"/draft-pr"** — same as above
+
+## Notes
+
+- **Related:** Use `code-review` to review the changes before drafting the PR
+- **Related:** Use `pr-comments` to incorporate reviewer feedback into the PR description
+
+## Output Format
+
+Present the drafted description as a markdown block, then ask:
+
+> "Here's the draft. Want me to adjust anything, or should I go ahead and create the PR with this?"
 
 ## Writing guidelines
 
