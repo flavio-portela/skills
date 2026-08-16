@@ -136,6 +136,10 @@ conventions, dependencies. Anything a fresh agent needs to know across all phase
 ---
 
 ## Phase 1: <imperative verb, e.g., "Add authentication middleware">
+### Status
+<Not started / In progress / Done (YYYY-MM-DD). Advance it as the phase's work is
+executed; re-verify it against the codebase on `update`.>
+
 ### Goal
 <what this phase achieves>
 
@@ -160,6 +164,8 @@ describe how to undo them. Omit if the phase is safely reversible.>
 ---
 
 ## Phase 2: <title>
+### Status
+...
 ### Goal
 ...
 
@@ -217,4 +223,5 @@ If called without subcommand, defaults to `create`.
 - When updating a plan, re-investigate the current codebase state — things may have changed since the plan was created
 - The **Design Decisions** section in the plan captures *why* choices were made, so a fresh agent executing phases later understands the rationale
 - **Mid-plan updates:** If phases have already been executed, an update should preserve completed phases and only re-plan the remaining work. Re-investigate to account for any new context from completed phases.
+- **Status fields:** Every phase carries a `### Status` (Not started / In progress / Done (YYYY-MM-DD)). Keep it current: mark `In progress` (with a one-line note of what remains) while executing, `Done (date)` only after the phase's Verification passes, and re-check all statuses against the actual codebase state during `update` — never trust the field alone.
 - **Plan splitting:** If a plan exceeds ~8 phases, split it into multiple plans (e.g., `plan-backend.md` and `plan-frontend.md`) to keep each one digestible.
