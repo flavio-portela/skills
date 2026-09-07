@@ -1,11 +1,13 @@
 ---
 name: task-planner
-description: Creates and manages structured plan.md files for complex multi-session coding tasks. Investigates the codebase first, resolves ambiguities with the user, then produces a detailed plan where each phase is a self-contained brief for a separate agent session.
+description: Creates and manages structured plan directories for complex multi-session coding tasks. Investigates the codebase first, resolves ambiguities with the user, then produces a detailed plan — an index plus one file per phase — where each phase is a self-contained brief for a separate agent session.
 ---
 
 # Task Planner
 
-Manages `plans/plan-<name>.md` files for complex, multi-session coding tasks. Each plan is designed so that **every phase can be executed by a fresh agent session** with no prior context — all necessary details must be baked into the phase brief.
+Manages `plans/plan-<name>/` directories for complex, multi-session coding tasks. Each plan is a directory with an `index.md` (overview, design decisions, codebase context, status table, dependencies) and one file per phase (`phase-<NN>-<slug>.md`).
+
+Each plan is designed so that **every phase can be executed by a fresh agent session** with no prior context — all necessary details must be baked into the phase file. An executing agent reads only the index and its own phase file, never the whole plan.
 
 ## Core Principle
 
@@ -13,7 +15,7 @@ Manages `plans/plan-<name>.md` files for complex, multi-session coding tasks. Ea
 
 - No phase is named "Investigation and design" — that work is done upfront
 - Each phase is actionable and specific, with all file paths, patterns, and context included
-- A fresh agent session can pick up any phase and execute it independently
+- A fresh agent session can pick up any phase and execute it independently — it reads only `index.md` and its own phase file
 
 **Ambiguities are resolved with the user before the plan is written.** The agent never guesses — when multiple valid approaches exist or requirements are unclear, it presents options to the user and waits for a decision. The final plan contains only resolved, concrete choices.
 
@@ -91,14 +93,16 @@ Only after this investigation (and any user decisions) is complete should you st
 
 Break the work into sequential phases. For each phase:
 - It must be a **concrete implementation step**, not a research step
-- It must be **self-contained**: a new agent session reading only this phase brief should be able to execute it
+- It must be **self-contained**: a new agent session reading only this phase file should be able to execute it
 - Include all required context: file paths, current code state, what to change, how to change it, and why
 - **All decisions from Step 3 must be resolved** — no placeholders, no "TBD", no "decide later"
-- If a plan exceeds **~8 phases**, consider splitting into multiple plans (e.g., "Part A" and "Part B"). This keeps each plan digestible for a single agent session.
+- Each phase becomes its own file: `phase-<NN>-<slug>.md` (NN = zero-padded position, slug = short lowercase-hyphenated title, e.g., `phase-01-auth-middleware.md`)
+
+Since each phase is a separate file, a plan comfortably holds more than ~8 phases — split into multiple plans only when the *index* gets unwieldy (e.g., multiple independent workstreams).
 
 ### Step 4.5: Review with the User
 
-Before writing the final plan file, present the phase outline to the user:
+Before writing the final plan files, present the phase outline to the user:
 - List each phase title and goal
 - Confirm the scope, ordering, and approach
 - Ask if anything needs adjustment
@@ -107,11 +111,13 @@ Before writing the final plan file, present the phase outline to the user:
 
 ### Step 5: Write the Plan
 
-Use the structure below.
+Create `plans/plan-<name>/` and write `index.md` plus one file per phase. Use the structures below.
 
-**Never execute the plan after creating it.** The skill produces a plan file only. Execution happens later, on demand, when the user explicitly asks (e.g., "execute Phase 1" or "run the plan").
+**Never execute the plan after creating it.** The skill produces a plan directory only. Execution happens later, on demand, when the user explicitly asks (e.g., "execute Phase 1" or "run the plan").
 
 ## Plan Structure
+
+### `index.md`
 
 ```markdown
 # Plan: <name>
@@ -133,56 +139,45 @@ conventions, dependencies. Anything a fresh agent needs to know across all phase
     ├── middleware/   ← Phase 1
     └── services/     ← Phase 3>
 
----
+## Phases
+| # | Phase | File | Status |
+|---|-------|------|--------|
+| 1 | Add authentication middleware | [phase-01-auth-middleware.md](phase-01-auth-middleware.md) | Not started |
+| 2 | Wire middleware into routes | [phase-02-wire-routes.md](phase-02-wire-routes.md) | Not started |
 
-## Phase 1: <imperative verb, e.g., "Add authentication middleware">
-### Status
-<Not started / In progress / Done (YYYY-MM-DD). Advance it as the phase's work is
-executed; re-verify it against the codebase on `update`.>
-
-### Goal
-<what this phase achieves>
-
-### Effort
-<small / medium / large — rough estimate to help the user prioritize>
-
-### Context
-<everything needed to execute: file paths, current state, relevant code snippets,
-patterns to follow, gotchas>
-
-### Tasks
-- [ ] <specific, actionable task>
-- [ ] <specific, actionable task>
-
-### Verification
-<how to verify this phase is done correctly — commands to run, manual checks>
-
-### Rollback
-<if this phase makes irreversible changes (migrations, public API additions, data changes),
-describe how to undo them. Omit if the phase is safely reversible.>
-
----
-
-## Phase 2: <title>
-### Status
-...
-### Goal
-...
-
-### Context
-...
-
-### Tasks
-...
-
-### Verification
-...
-
----
+**This table is the single source of truth for phase status** — update it here
+and only here. Re-verify all rows against the codebase on `update`; never trust the table alone.
 
 ## Dependencies
 - Phase 2 depends on Phase 1
 - Phase 3 depends on Phase 2
+```
+
+### `phase-<NN>-<slug>.md`
+
+```markdown
+# Phase 1: <imperative verb, e.g., "Add authentication middleware">
+
+## Goal
+<what this phase achieves>
+
+## Effort
+<small / medium / large — rough estimate to help the user prioritize>
+
+## Context
+<everything needed to execute: file paths, current state, relevant code snippets,
+patterns to follow, gotchas>
+
+## Tasks
+- [ ] <specific, actionable task>
+- [ ] <specific, actionable task>
+
+## Verification
+<how to verify this phase is done correctly — commands to run, manual checks>
+
+## Rollback
+<if this phase makes irreversible changes (migrations, public API additions, data changes),
+describe how to undo them. Omit if the phase is safely reversible.>
 ```
 
 ## Usage
@@ -192,9 +187,9 @@ Invocation patterns (prompt-based, not scripts):
 ```
 /skill:task-planner create <name>    Create new plan (investigates first, asks questions, then writes)
 /skill:task-planner list             List all plans in current project
-/skill:task-planner view <name>      Display a specific plan
+/skill:task-planner view <name>      Display the plan index (read phase files on request)
 /skill:task-planner update <name>    Re-investigate and update an existing plan
-/skill:task-planner delete <name>    Delete a plan
+/skill:task-planner delete <name>    Delete a plan directory
 ```
 
 If called without subcommand, defaults to `create`.
@@ -213,15 +208,18 @@ If called without subcommand, defaults to `create`.
 | A plan containing "TBD" or "decide later" | All decisions are resolved before the plan is written; rationale is captured in the Design Decisions section |
 | Presenting choices without context | "Option A matches the pattern in `src/auth/middleware.ts`" — ground options in the actual codebase |
 | Presenting decisions as markdown text | Use `questionnaire` tool for interactive tabbed questions with an "Other" option |
+| Status tracked in both the index and phase files | Status lives only in the Phases table of `index.md`; phase files hold Goal/Effort/Context/Tasks/Verification |
+| Execution session rewriting or editing the whole plan | Execution touches only its own phase file (task checkboxes) and its own status row in the index |
 
 
 ## Notes
 
-- Plans are stored in `plans/` directory (created if missing)
-- File naming: `plan-<name>.md` (lowercased, spaces → hyphens)
-- If plan name already exists, prompts to overwrite or cancel
+- Plans are stored in `plans/plan-<name>/` directories (created if missing)
+- Directory naming: `plan-<name>` (lowercased, spaces → hyphens); phase files are `phase-<NN>-<slug>.md` with zero-padded NN
+- If a plan with the same name already exists, prompts to overwrite or cancel
 - When updating a plan, re-investigate the current codebase state — things may have changed since the plan was created
-- The **Design Decisions** section in the plan captures *why* choices were made, so a fresh agent executing phases later understands the rationale
-- **Mid-plan updates:** If phases have already been executed, an update should preserve completed phases and only re-plan the remaining work. Re-investigate to account for any new context from completed phases.
-- **Status fields:** Every phase carries a `### Status` (Not started / In progress / Done (YYYY-MM-DD)). Keep it current: mark `In progress` (with a one-line note of what remains) while executing, `Done (date)` only after the phase's Verification passes, and re-check all statuses against the actual codebase state during `update` — never trust the field alone.
-- **Plan splitting:** If a plan exceeds ~8 phases, split it into multiple plans (e.g., `plan-backend.md` and `plan-frontend.md`) to keep each one digestible.
+- The **Design Decisions** section in `index.md` captures *why* choices were made, so a fresh agent executing phases later understands the rationale
+- **Status lives only in `index.md`:** every row in the Phases table carries a status (Not started / In progress / Done (YYYY-MM-DD)). Mark `In progress` (with a one-line note of what remains) while executing, `Done (date)` only after the phase's Verification passes, and re-check all rows against the actual codebase state during `update` — never trust the table alone.
+- **Task checkboxes live in the phase files:** the executing agent checks them off in place; its writes are limited to its own phase file and its own status row in the index.
+- **Mid-plan updates:** If phases have already been executed, an update should preserve completed phase files and only re-plan the remaining work. Re-investigate to account for any new context from completed phases.
+- **Plan splitting:** Per-phase files keep plans digestible, so a plan can comfortably hold more than ~8 phases; split into multiple plans (e.g., `plan-backend/` and `plan-frontend/`) only when the index becomes unwieldy or the workstreams are independent.

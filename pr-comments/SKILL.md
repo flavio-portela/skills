@@ -120,9 +120,71 @@ Once comments are presented, do NOT immediately analyze them. Wait for the user 
 - Understand the main concerns raised
 - Plan fixes based on the feedback
 - Discuss specific comments in detail
+- Reply to review threads (see "Replying to Threads")
 
 If the user asks for analysis, identify:
 - Key themes and concerns across comments
 - Unresolved threads or open questions
 - Actionable items that need code changes
 - Priority ordering (blockers first, then suggestions)
+
+## Replying to Threads
+
+Use this when the user asks to answer/reply to specific comments (e.g. review
+feedback from a human or a bot like Codex). Always confirm the reply text
+with the user before posting to a live PR.
+
+### Review comment threads (inline comments on code)
+
+`in_reply_to` **must be a JSON number**, and `gh api -f` sends every param
+as a string — `gh api ... -f in_reply_to=123` is rejected with a cryptic
+`oneOf` validation error (it contains `"..." is not a number`; read the
+error carefully instead of assuming the param was removed). Send raw JSON
+via curl:
+
+```bash
+TOKEN=$(gh auth token)
+
+# Payload file avoids shell-escaping markdown bodies
+printf '%s' '{"in_reply_to": 123456789, "body": "Reply text (markdown OK)"}' > /tmp/pr-reply.json
+
+# Sanity-check the payload before posting (jq fails on bad JSON/escaping)
+jq -c '{in_reply_to, body: .body[0:40]}' /tmp/pr-reply.json
+
+curl -s -X POST "https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/comments" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept: application/vnd.github+json" \
+  -H "Content-Type: application/json" \
+  --data @/tmp/pr-reply.json | jq -c '{id, in_reply_to_id}'
+```
+
+- Point `in_reply_to` at the thread's **top-level** comment id (the one
+  with `in_reply_to_id: null` from the fetch step) — the reply renders in
+  that thread.
+- Do NOT use the GraphQL `addComment` / `addPullRequestReviewThreadReply`
+  mutations for this: that API surface is in flux (inputs/payload fields
+  change between versions) and can fail silently with `comment: null` and
+  no error. The REST endpoint above is stable.
+
+### Issue/conversation comments
+
+Flat list, no `in_reply_to` — the plain `gh api` form works here (no
+numeric-typed fields):
+
+```bash
+gh api repos/{owner}/{repo}/issues/{pr_number}/comments -f body="Reply text"
+```
+
+### Hygiene
+
+- Never probe the mechanism with dummy comments on a live PR — validate the
+  JSON payload locally (`jq .`) instead.
+- If you must delete a comment, verify by HTTP status, not body shape (204
+  has an empty body, which is easy to confuse with an error payload):
+  ```bash
+  curl -s -o /dev/null -w "%{http_code}\n" -X DELETE \
+    "https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/comments/{comment_id}" \
+    -H "Authorization: Bearer $TOKEN"   # expect 204
+  ```
+- The comments list API can lag a minute or two after a deletion — verify
+  with a direct GET of the comment id (404 = gone) if the list still shows it.
