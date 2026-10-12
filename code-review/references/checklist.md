@@ -18,7 +18,7 @@
 | S2 | **Performance traps** | N+1 queries, unnecessary re-renders, O(n²) where O(n) is easy, unbounded result sets |
 | S3 | **Missing edge cases** | Empty arrays, null/undefined inputs, concurrent access, large payloads, timeout scenarios |
 | S4 | **Incorrect error handling** | Catching too broadly, wrong error type, misleading error messages, errors that hide the real cause |
-| S5 | **Missing tests** | Changed logic with no new or updated tests, critical paths untested |
+| S5 | **Missing tests** | A concrete behavior or critical path introduced by the change lacks relevant coverage; don't flag merely because the diff contains no new tests if existing tests already cover it |
 | S6 | **Broken tests** | Tests that pass but don't assert, skipped tests, flaky test patterns |
 
 ## 🔵 Suggestions — Better if changed (--thorough only)

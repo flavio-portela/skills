@@ -19,8 +19,9 @@ When the user mentions a PR number or asks to "review the PR":
    - Explicit number (e.g., "review PR #42") → use that number
    - No number given (e.g., "review the PR") → auto-detect from current branch:
      ```bash
-     gh pr status --json currentBranch --jq '.currentBranch.number'
+     gh pr view --json number --jq '.number'
      ```
+     If the branch has no PR, ask for a PR number or whether to review the branch instead.
 
 2. **Fetch PR context**:
    ```bash
@@ -40,16 +41,22 @@ When the user mentions a PR number or asks to "review the PR":
 
 When the user asks to review their branch, current changes, or doesn't mention a PR:
 
-1. **Determine the base branch** — default is `main`. User can specify a different base (e.g., "review against develop").
+1. **Determine the base branch** — use the user's specified base if given. Otherwise, use the current branch's PR base if available; if not, check the repository's default branch (e.g., `git symbolic-ref refs/remotes/origin/HEAD`). If the intended base remains unclear, ask instead of assuming `main`.
 
-2. **Fetch the diff**:
+2. **Fetch committed branch changes**:
    ```bash
    git diff <base>...HEAD
    ```
+3. **If reviewing "current changes" or the working tree**, also include staged and unstaged changes and inspect untracked files:
+   ```bash
+   git diff HEAD
+   git ls-files --others --exclude-standard
+   ```
+   `git diff HEAD` includes changes to tracked files only; read the untracked files listed by the second command. If the user asks specifically for committed branch changes, don't include working-tree changes.
 
 ## Review Scope
 
-- **Default**: Review only the diff lines (added/removed).
+- **Default**: Review only changed lines in the selected scope (including untracked files when reviewing the working tree).
 - **When context is needed**: If a finding involves surrounding code, read the full file for that specific area. This is at your judgment — don't read every full file upfront, only when the diff alone is insufficient to assess a finding.
 
 ## Thoroughness Level
@@ -76,7 +83,7 @@ If the user asks to "review nits too" or "include suggestions", treat that as `-
 ## Output Format
 
 ```
-## Code Review: <"PR #N — Title" or "Branch <name> vs <base>">
+## Code Review: <"PR #N — Title" or "Branch <name> vs <base>" (note if working-tree changes are included)>
 
 🔴 M2  path/to/file.ts:47
     SQL injection via string interpolation in INSERT query.
@@ -87,12 +94,12 @@ If the user asks to "review nits too" or "include suggestions", treat that as `-
     Suggested fix: Catch unique constraint violation, return 409.
 
 ---
-Verdict: Request Changes — 1 must-fix, 2 should-fix
+Verdict: Request Changes — 1 must-fix, 1 should-fix
 ```
 
 ### Verdict Rules
 
-- **Approve** — zero must-fix and zero should-fix findings.
+- **Approve** — zero findings.
 - **Request Changes** — one or more must-fix OR should-fix findings.
 - **Comment** — only suggestions and/or nits (no must-fix or should-fix).
 
