@@ -63,26 +63,32 @@ While investigating, **collect any ambiguities** — places where:
 
 ### Step 3: Present Open Decisions (If Any)
 
-If Step 2 revealed ambiguities, present them to the user **before writing the plan** using the `questionnaire` tool. For each decision, create a question:
+If Step 2 revealed ambiguities, present them to the user **before writing the plan**. If your environment provides a structured question tool (multiple-choice prompts), use it; otherwise ask in plain text. Either way, each decision should have:
 
-```json
-{
-  "id": "<short-id>",
-  "label": "<short title for tab bar>",
-  "prompt": "<context: why this matters, what it affects, your recommendation>",
-  "options": [
-    { "value": "a", "label": "<option A>", "description": "<pros / cons>" },
-    { "value": "b", "label": "<option B>", "description": "<pros / cons>" }
-  ],
-  "allowOther": true
-}
+- **Title**: a short name for the decision
+- **Context**: why it matters, what it affects, and your recommendation
+- **Options**: two or more labeled choices, each with its pros / cons
+- **Free-form answer**: the user can always answer with something other than the listed options
+
+In plain text, a decision looks like:
+
+```markdown
+### Decision 1: <short title>
+<context: why this matters, what it affects>
+
+- **A) <option A>** — <pros / cons>
+- **B) <option B>** — <pros / cons>
+
+**Recommendation:** A, because <reason grounded in the codebase>.
+Or describe a different approach.
 ```
 
 **Rules for this step:**
 
-- Always include a **recommendation** in the prompt text — don't just dump choices on the user
+- Always include a **recommendation** — don't just dump choices on the user
 - Ground options in the codebase (e.g. "Option A matches the pattern already used in `src/auth/middleware.ts`")
-- Set `allowOther: true` so the user can type a custom answer or ask for more discussion
+- Always leave room for a custom answer or further discussion
+- Batch all open decisions into one round of questions rather than asking them one at a time
 - If there's only one reasonable path, skip this step — don't manufacture decisions
 - Wait for the user's response before proceeding. They can accept the recommendation, pick another option, or write something entirely different
 - If there are no ambiguities, skip this step and go straight to Step 4
@@ -182,17 +188,17 @@ describe how to undo them. Omit if the phase is safely reversible.>
 
 ## Usage
 
-Invocation patterns (prompt-based, not scripts):
+The skill supports these operations. The user may name them explicitly (however their agent invokes skills) or describe them in natural language, e.g. "plan out the auth migration" or "update the auth plan":
 
-```
-/skill:task-planner create <name>    Create new plan (investigates first, asks questions, then writes)
-/skill:task-planner list             List all plans in current project
-/skill:task-planner view <name>      Display the plan index (read phase files on request)
-/skill:task-planner update <name>    Re-investigate and update an existing plan
-/skill:task-planner delete <name>    Delete a plan directory
-```
+| Operation | Effect |
+|---|---|
+| `create <name>` | Create a new plan (investigates first, asks questions, then writes) |
+| `list` | List all plans in the current project |
+| `view <name>` | Display the plan index (read phase files on request) |
+| `update <name>` | Re-investigate and update an existing plan |
+| `delete <name>` | Delete a plan directory (confirm with the user first) |
 
-If called without subcommand, defaults to `create`.
+If no operation is specified, default to `create`.
 
 ## Anti-patterns to Avoid
 
@@ -204,10 +210,10 @@ If called without subcommand, defaults to `create`.
 | No verification step | "Run `npm test` and `npm run lint`, confirm all pass; manually test `POST /api/users` returns 201" |
 | Creating a plan and then executing it immediately | Plan creation is a separate step from execution; the plan is written for a future agent session to consume |
 | Passing execution commands from the parent session into phase tasks | Each phase must be fully self-contained — a fresh agent reading only that phase brief must have everything it needs |
-| Guessing when the approach is unclear | Use `questionnaire` tool with options and a recommendation, wait for the user to decide |
+| Guessing when the approach is unclear | Present options with a recommendation, wait for the user to decide |
 | A plan containing "TBD" or "decide later" | All decisions are resolved before the plan is written; rationale is captured in the Design Decisions section |
 | Presenting choices without context | "Option A matches the pattern in `src/auth/middleware.ts`" — ground options in the actual codebase |
-| Presenting decisions as markdown text | Use `questionnaire` tool for interactive tabbed questions with an "Other" option |
+| Asking decisions one at a time across many turns | Batch all open decisions into one round, using a structured question tool if the agent has one |
 | Status tracked in both the index and phase files | Status lives only in the Phases table of `index.md`; phase files hold Goal/Effort/Context/Tasks/Verification |
 | Execution session rewriting or editing the whole plan | Execution touches only its own phase file (task checkboxes) and its own status row in the index |
 
