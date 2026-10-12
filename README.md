@@ -17,4 +17,11 @@ A collection of skills for coding agents — works with Pi, Codex, Claude Code, 
 | [draft-pr](draft-pr/) | Drafts clear, jargon-free PR descriptions from the current branch's commits and diffs. Auto-detects feature, bug fix, or documentation changes. |
 | [frontend-design](frontend-design/) | Creates distinctive, production-grade frontend interfaces with high design quality. Avoids generic AI aesthetics. |
 | [pr-comments](pr-comments/) | Fetches and presents comments from a GitHub PR, organized by file for easy analysis. |
-| [task-planner](task-planner/) | Creates structured `plan.md` files for complex multi-session tasks. Investigates the codebase, resolves ambiguities, and produces actionable phase-by-phase plans. |
+| [skill-creator](skill-creator/) | Creates and improves skills through drafting, test prompts, feedback, and iteration. |
+| [task-planner](task-planner/) | Creates and manages plan directories for complex multi-session tasks, with an index and a self-contained brief for each phase. |
+| [tmux-task](tmux-task/) | Runs a Pi task in a visible tmux pane or session and reports when it finishes. |
+| [user-perspective](user-perspective/) | Brainstorms features from the product's target user's perspective, grounded in their workflow and pain points. |
+
+## Claude Code
+
+Run `./sync-claude-code.sh` to symlink these skills into `~/.claude/skills`. It leaves existing non-matching entries alone and removes stale links it created when a source skill no longer exists.
