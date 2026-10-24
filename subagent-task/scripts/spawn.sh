@@ -73,7 +73,7 @@ lock_is_live() {
   other=$(cat "$LOCK" 2>/dev/null || true)
   read -r _ lpid _ <<< "$other" || return 1
   [ -n "${lpid:-}" ] && kill -0 "$lpid" 2>/dev/null \
-    && ps -o command= -p "$lpid" 2>/dev/null | grep -qE 'pane-run|spawn\.sh'
+    && ps -o command= -p "$lpid" 2>/dev/null | grep -qE 'pane-run|spawn\.sh|headless-run\.sh|rpc-task\.py'
 }
 
 lock_guard() {

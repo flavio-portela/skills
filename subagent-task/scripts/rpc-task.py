@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a Pi RPC child with a live tmux activity view, or answer its question."""
+"""Run a Pi RPC child with live activity logs, or answer its question."""
 
 import json
 import os
@@ -12,7 +12,7 @@ import tempfile
 import uuid
 from pathlib import Path
 
-BASE = Path("/tmp/pi-tasks")
+BASE = Path(os.environ.get("PI_TASK_ROOT", "/tmp/pi-tasks"))
 
 
 def write_atomic(path, value):
@@ -249,7 +249,7 @@ class Controller:
             self.publish()
 
     def run(self):
-        self.line(f"[task {self.slug}] RPC activity view — raw events: {self.scratch / 'events.jsonl'}")
+        self.line(f"[task {self.slug}] RPC activity — raw events: {self.scratch / 'events.jsonl'}")
         self.phase = "running"
         self.publish()
         self.send({"id": "state", "type": "get_state"})

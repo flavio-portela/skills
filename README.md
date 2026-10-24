@@ -19,7 +19,7 @@ A collection of skills for coding agents — works with Pi, Codex, Claude Code, 
 | [pr-comments](pr-comments/) | Fetches and presents comments from a GitHub PR, organized by file for easy analysis. |
 | [skill-creator](skill-creator/) | Creates and improves skills through drafting, test prompts, feedback, and iteration. |
 | [task-planner](task-planner/) | Creates and manages plan directories for complex multi-session tasks, with an index and a self-contained brief for each phase. |
-| [tmux-task](tmux-task/) | Runs a Pi task in a visible tmux pane or session and reports when it finishes. |
+| [subagent-task](subagent-task/) | Delegates work to an isolated Pi subagent with live progress in the current session; a tmux pane is optional. |
 | [user-perspective](user-perspective/) | Brainstorms features from the product's target user's perspective, grounded in their workflow and pain points. |
 
 ## Claude Code
